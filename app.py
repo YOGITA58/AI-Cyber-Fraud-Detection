@@ -1,3 +1,4 @@
+from feature_extractor import extract_features
 from flask import Flask, render_template, request
 import pickle
 
@@ -9,29 +10,19 @@ with open("model/phishing_model.pkl", "rb") as file:
 
 @app.route("/", methods=["GET", "POST"])
 def home():
+    
 
+    analysis = {}
     prediction = ""
     confidence = ""
 
     if request.method == "POST":
 
-        url_length = int(request.form["url_length"])
-        ip_address = int(request.form["ip_address"])
-        ssl_state = int(request.form["ssl_state"])
-        age_domain = int(request.form["age_domain"])
-        google_index = int(request.form["google_index"])
+        url = request.form["url"]
 
-        features = [[
-            ip_address,
-            url_length,
-            0, 0, 0, 0, 0,
-            ssl_state,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            age_domain,
-            0, 0, 0,
-            google_index,
-            0, 0
-        ]]
+        features, analysis = extract_features(url)
+
+        features = [features]
 
         result = model.predict(features)
 
@@ -41,15 +32,15 @@ def home():
         )
 
         if result[0] == -1:
-            prediction = "<span style='color:red;'>🚨 Phishing Website</span>"
+            prediction = "🚨 Phishing Website"
         else:
-            prediction = "<span style='color:lime;'>✅ Legitimate Website</span>"
+            prediction = "✅ Legitimate Website"
 
     return render_template(
-        "index.html",
-        prediction=prediction,
-        confidence=confidence
-    )
-
+    "index.html",
+    prediction=prediction,
+    confidence=confidence,
+    analysis=analysis
+)
 if __name__ == "__main__":
     app.run(debug=True)

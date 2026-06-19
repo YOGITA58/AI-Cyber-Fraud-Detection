@@ -117,6 +117,17 @@
             padding:20px;
             color:#94a3b8;
         }
+        .dashboard{
+    margin-top:20px;
+    padding:20px;
+    background:#1a1a1a;
+    border-radius:10px;
+    text-align:left;
+}
+
+.dashboard h2{
+    color:#00ff88;
+}
 
     </style>
 </head>
@@ -157,31 +168,11 @@
 
                 <div class="form-grid">
 
-                    <input type="number"
-                           name="url_length"
-                           placeholder="URL Length"
-                           required>
-
-                    <input type="number"
-                           name="ip_address"
-                           placeholder="IP Address Feature"
-                           required>
-
-                    <input type="number"
-                           name="ssl_state"
-                           placeholder="SSL State"
-                           required>
-
-                    <input type="number"
-                           name="age_domain"
-                           placeholder="Age of Domain"
-                           required>
-
-                    <input type="number"
-                           name="google_index"
-                           placeholder="Google Index"
-                           required>
-
+                   <input
+    type="text"
+    name="url"
+    placeholder="Enter Website URL"
+    required>
                 </div>
 
                 <button type="submit">
@@ -195,6 +186,35 @@
                 <div class="result">
                     {{ prediction|safe }}
                 </div>
+                {% if analysis %}
+
+<div class="dashboard">
+
+    <h2>URL Analysis Report</h2>
+
+    <p><strong>URL Length:</strong>
+        {{ analysis.url_length }}
+    </p>
+
+    <p><strong>SSL Enabled:</strong>
+        {% if analysis.ssl_state == 1 %}
+            Yes 🔒
+        {% else %}
+            No 🔓
+        {% endif %}
+    </p>
+
+    <p><strong>IP Address Used:</strong>
+        {% if analysis.ip_address == 1 %}
+            Yes
+        {% else %}
+            No
+        {% endif %}
+    </p>
+
+</div>
+
+{% endif %}
 
                 <div class="confidence">
                     {% if confidence %}
